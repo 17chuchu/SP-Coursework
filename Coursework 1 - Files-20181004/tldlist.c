@@ -124,6 +124,37 @@ void tldlist_destroy(TLDList *tld)
     //printf("Complete Free TLDlist\n");
 }
 
+void checkmissing(TLDList * tld)
+{
+    TLDNode * node = tld->head;
+    
+    int missingcom = 0;
+    
+    int lenght = tld->lenght;
+    int count = 0;
+    
+    while(node != NULL)
+    {
+        if(strcmp(node->tldname,"com"))
+        {
+            printf("com\n");
+            missingcom = 1;
+        }
+        count += node->count;
+        node = node->child;
+    }
+    
+    if(!missingcom)
+    {
+        printf("missing com\n");
+    }
+    
+    if(lenght != count)
+    {
+        printf("Invalid %d %d \n",lenght,count);
+    }
+}
+
 /*
  * tldlist_add adds the TLD contained in `hostname' to the tldlist if
  * `d' falls in the begin and end dates associated with the list;
@@ -131,7 +162,7 @@ void tldlist_destroy(TLDList *tld)
  */
 int tldlist_add(TLDList *tld, char *hostname, Date *d)
 {
-    if(!(date_compare(d, tld->begin) > 0 && date_compare(d, tld->end) < 0))
+    if(!(date_compare(d, tld->begin) >= 0 && date_compare(d, tld->end) <= 0))
     {
         return 0;
     }
@@ -185,8 +216,8 @@ int tldlist_add(TLDList *tld, char *hostname, Date *d)
                 node->count += 1;
                 free(newnode->tldname);
                 free(newnode);
-                
                 tld->lenght += 1;
+                //checkmissing(tld);
                 return 1;
             }
         }
@@ -205,15 +236,16 @@ int tldlist_add(TLDList *tld, char *hostname, Date *d)
         tld->tail = newnode;
     }
     //printf("%s\n",tldname);
-    tldlist_selfbalance(tld);
+    //tldlist_selfbalance(tld);
     tld->lenght += 1;
+    //checkmissing(tld);
     return 1;
 }
 
 int tldlist_selfbalance(TLDList *tld)
 {
     TLDNode * uneven_node = check_for_uneven_node(tld->treehead);
-    if(check_for_uneven_node(tld->treehead) == NULL)
+    if(uneven_node == NULL)
     {
         return 0;
     }

@@ -30,7 +30,8 @@ Date *date_create(char *datestr){
     //year
     int year = atoi (strtok(NULL, sep));
 
-    if(2018 < year || year < 0)
+    // if(2018 < year || year < 0)
+    if(year < 0)
     {
         isvalid = 0;
     }
@@ -70,7 +71,7 @@ Date *date_create(char *datestr){
     }
     else
     {
-        //printf("Failed to create Date %s\n",datestr);
+        printf("Failed to create Date %s\n",datestr);
         return NULL;
     }
 }
@@ -100,14 +101,42 @@ int date_compare(Date *date1, Date *date2) {
         return 0;
     }
     
-    int result = 0;
+    //int result = 0;
     
-    result += (date1->year - date2->year) * 365;
-    result += (date1->month - date2->month) * 31;
-    result += (date1->day - date2->day);
+    if(date1->year < date2->year)
+    {
+        return -1;
+    }
+    if(date1->year > date2->year)
+    {
+        return 1;
+    }
     
-    return result;
+    if(date1->month < date2->month)
+    {
+        return -1;
+    }
+    if(date1->month > date2->month)
+    {
+        return 1;
+    }
+    
+    if(date1->day < date2->day)
+    {
+        return -1;
+    }
+    if(date1->day > date2->day)
+    {
+        return 1;
+    }
+    
+    //result += (date1->year - date2->year) * 365;
+    //result += (date1->month - date2->month) * 31;
+    //result += (date1->day - date2->day);
+    
+    return 0;
 }
+
 
 void date_destroy(Date * d)
 {
